@@ -93,7 +93,12 @@ module ChiliProject
 
       role = instance_parent.has_key?(role_key) ? instance_parent[role_key] : node_parent[role_key]
       if role
-        search(:node, "roles:#{role} AND chef_environment:#{node.chef_environment}")
+        if Chef::Config['solo'] && !defined?(search)
+          Chef::Log.warn("Can't search for a role in Chef Solo")
+          []
+        else
+          search(:node, "roles:#{role} AND chef_environment:#{node.chef_environment}")
+        end
       else
         hosts = instance_parent[hostname_key]
         hosts ||= node_parent[hostname_key]
