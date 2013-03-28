@@ -512,7 +512,12 @@ define :chiliproject, :name => "default", :instance => nil do
   # Setup logrotate for the logfiles
 
   if inst['logrotate']
+    # Remove old file which was created due to a typo
     logrotate_app "ChiliProject #{inst['id']}" do
+      path "#{inst['log_dir']}/*.log"
+      enable false
+    end
+    logrotate_app "chili_#{inst['id']}" do
       path "#{inst['log_dir']}/*.log"
       frequence "weekly"
       rotate 8
